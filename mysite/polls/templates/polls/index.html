@@ -1,9 +1,47 @@
 {% if latest_question_list %}
-    <ul>
-    {% for question in latest_question_list %}
-        <li><a href="{% url 'polls:detail' question.id %}">{{ question.question_text }}</a></li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No polls are available.</p>
-{% endif %}
+{% load static %}
+
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CA1 Backend </title>
+    <meta name="description" content="">
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="{% static 'polls/style.css' %}">
+</head>
+<body>
+
+    <!-- header hero block -->
+    <header class="hero-block hero-block-js">
+        <div class="hero-text-container">
+            <h1>Movies Listing </h1>
+        </div>
+    </header>
+    <!-- main content with sections -->
+    <main id="main">
+        <ul>
+            {% for question in latest_question_list %}
+                <div>
+                   <a  href="{% url 'polls:detail' question.id %}">
+                       <h2>{{ question.question_text }}</h2>
+                    </a>
+                </div>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>No polls are available.</p>
+        {% endif %}
+    </main>
+
+
+</body>
+</html>
+
+
+
+
+
+
