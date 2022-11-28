@@ -10,5 +10,11 @@
 </fieldset>
 <input type="submit" value="Vote">
 </form>
+<form action="{% url 'polls:delete' question.id %}" method="delete">
+{% csrf_token %}
+<input type="submit" value = "Delete">
+</form>
+
+
 
 
