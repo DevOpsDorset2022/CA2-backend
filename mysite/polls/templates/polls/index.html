@@ -1,4 +1,4 @@
-{% if latest_question_list %}
+{% if latest_movie_list %}
 {% load static %}
 
 
@@ -23,10 +23,10 @@
     <!-- main content with sections -->
     <main id="main">
         <ul>
-            {% for question in latest_question_list %}
+            {% for question in latest_movie_list %}
                 <div>
-                   <a  href="{% url 'polls:detail' question.id %}">
-                       <h2>{{ question.question_text }}</h2>
+                   <a  href="{% url 'polls:detail' movie.id %}">
+                       <h2>{{ movie.title }}</h2>
                     </a>
                 </div>
             {% endfor %}
