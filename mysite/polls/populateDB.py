@@ -4,6 +4,7 @@ import requests
 from django.utils.datetime_safe import datetime
 
 
+
 class Movie2:
     def __init__(self, title, release_date, score, image_path):
         self.title = title
@@ -26,7 +27,7 @@ for i in range(1, 2):
     print(page)
     for element in json_data['results']:
         movie = Movie2(element['title'],
-                       element['release_date']+" 00:00:00+00:00",
+                       element['release_date'] + " 00:00:00+00:00",
                        "https://image.tmdb.org/t/p/w1280" + element['poster_path'],
                        element['vote_average'])
         movies.append(movie)
@@ -36,9 +37,4 @@ for movie in movies:
     print(movie.release_date)
     print(movie.score)
     print(movie.image_path)
-
-
-
-
-
 

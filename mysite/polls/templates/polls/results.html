@@ -1,9 +1,17 @@
-<h1>{{ movie.title }}</h1>
+<form action="{% url 'polls:vote' movie.id %}" method="post">
+{% csrf_token %}
+<fieldset>
+    <legend><h1>{{ movie.question_text }}</h1></legend>
+    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+    {% for choice in movie.choice_set.all %}
+        <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+        <label for="choice{{ forloop.counter }}">{{ movie.choice_text }}</label><br>
+    {% endfor %}
+</fieldset>
+<input type="submit" value="Vote">
+</form>
+<form action="{% url 'polls:delete' question.id %}" method="delete">
+{% csrf_token %}
+<input type="submit" value = "Delete">
+</form>
 
-<ul>
-{% for choice in movie.choice_set.all %}
-    <li>{{ choice.choice }} -- {{ choice.votes }} vote{{ choice.votes|pluralize }}</li>
-{% endfor %}
-</ul>
-
-<a href="{% url 'polls:index' %}">Vote again?</a>

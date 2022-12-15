@@ -65,3 +65,4 @@ def delete(request, question_id):
     question = get_object_or_404(Movie, pk=question_id)
     question.delete()
     return HttpResponseRedirect(reverse('polls:index'))
+
