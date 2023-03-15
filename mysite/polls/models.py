@@ -21,7 +21,6 @@ class Movie(models.Model):
     def __str__(self):
         return self.title
 
-
 class Choice(models.Model):
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
     choice = models.CharField(max_length=200)
