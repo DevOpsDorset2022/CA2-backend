@@ -6,126 +6,6 @@ from django.urls import reverse
 from .models import Movie, Choice
 
 
-class QuestionModelTests(TestCase):
-
-    def test_was_published_recently_with_future_question(self):
-        """
-        was_published_recently() returns False for questions whose release_date
-        is in the future.
-        """
-        time = timezone.now() + datetime.timedelta(days=30)
-        future_question = Movie(pub_date=time)
-        self.assertIs(future_question.was_published_recently(), False)
-
-    def test_was_published_recently_with_old_question(self):
-        """
-        was_published_recently() returns False for questions whose release_date
-        is older than 1 day.
-        """
-        time = timezone.now() - datetime.timedelta(days=1, seconds=1)
-        old_question = Movie(pub_date=time)
-        self.assertIs(old_question.was_published_recently(), False)
-
-    def test_was_published_recently_with_recent_question(self):
-        """
-        was_published_recently() returns True for questions whose release_date
-        is within the last day.
-        """
-        time = timezone.now() - datetime.timedelta(hours=23, minutes=59, seconds=59)
-        recent_question = Movie(pub_date=time)
-        self.assertIs(recent_question.was_published_recently(), True)
-
-
-def create_question(question_text, days):
-    """
-    Create a movie with the given `title` and published the
-    given number of `days` offset to now (negative for questions published
-    in the past, positive for questions that have yet to be published).
-    """
-    time = timezone.now() + datetime.timedelta(days=days)
-    return Movie.objects.create(question_text=question_text, pub_date=time)
-
-
-class QuestionIndexViewTests(TestCase):
-    def test_no_questions(self):
-        """
-        If no questions exist, an appropriate message is displayed.
-        """
-        response = self.client.get(reverse('polls:index'))
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "No polls are available.")
-        self.assertQuerysetEqual(response.context['latest_question_list'], [])
-
-    def test_past_question(self):
-        """
-        Questions with a release_date in the past are displayed on the
-        index page.
-        """
-        question = create_question(question_text="Past movie.", days=-30)
-        response = self.client.get(reverse('polls:index'))
-        self.assertQuerysetEqual(
-            response.context['latest_question_list'],
-            [question],
-        )
-
-    def test_future_question(self):
-        """
-        Questions with a release_date in the future aren't displayed on
-        the index page.
-        """
-        create_question(question_text="Future movie.", days=30)
-        response = self.client.get(reverse('polls:index'))
-        self.assertContains(response, "No polls are available.")
-        self.assertQuerysetEqual(response.context['latest_question_list'], [])
-
-    def test_future_question_and_past_question(self):
-        """
-        Even if both past and future questions exist, only past questions
-        are displayed.
-        """
-        question = create_question(question_text="Past movie.", days=-30)
-        create_question(question_text="Future movie.", days=30)
-        response = self.client.get(reverse('polls:index'))
-        self.assertQuerysetEqual(
-            response.context['latest_question_list'],
-            [question],
-        )
-
-    def test_two_past_questions(self):
-        """
-        The questions index page may display multiple questions.
-        """
-        question1 = create_question(question_text="Past movie 1.", days=-30)
-        question2 = create_question(question_text="Past movie 2.", days=-5)
-        response = self.client.get(reverse('polls:index'))
-        self.assertQuerysetEqual(
-            response.context['latest_question_list'],
-            [question2, question1],
-        )
-
-
-class QuestionDetailViewTests(TestCase):
-    def test_future_question(self):
-        """
-        The detail view of a movie with a release_date in the future
-        returns a 404 not found.
-        """
-        future_question = create_question(question_text='Future movie.', days=5)
-        url = reverse('polls:detail', args=(future_question.id,))
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 404)
-
-    def test_past_question(self):
-        """
-        The detail view of a movie with a release_date in the past
-        displays the movie's text.
-        """
-        past_question = create_question(question_text='Past Movie.', days=-5)
-        url = reverse('polls:detail', args=(past_question.id,))
-        response = self.client.get(url)
-        self.assertContains(response, past_question.title)
-
-
 class TestModels(TestCase):
     def test_was_published_recently_with_future_movie(self):
         """
@@ -266,3 +146,99 @@ class TestModels(TestCase):
         with self.assertRaises(ValidationError):
             movie.score = 11
             movie.full_clean()
+
+
+class IndexViewTests(TestCase):
+    def test_no_movies(self):
+        """
+        If no movies exist, an appropriate message is displayed.
+        """
+        response = self.client.get(reverse('polls:index'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "No movies are available.")
+        self.assertQuerysetEqual(response.context['latest_movie_list'], [])
+
+    def test_past_movie(self):
+        """
+        Movies with a release date in the past are displayed on the index page.
+        """
+        Movie.objects.create(title="Past movie", release_date=timezone.now() - datetime.timedelta(days=1),
+                     image="some path", score=0, vote_count=0, overview="some overview")
+        response = self.client.get(reverse('polls:index'))
+        self.assertQuerysetEqual(
+            response.context['latest_movie_list'],
+            ['<Movie: Past movie>']
+        )
+
+    def test_future_movie(self):
+        """
+        Movies with a release date in the future aren't displayed on the index page.
+        """
+        Movie.objects.create(title="Future movie", release_date=timezone.now() + datetime.timedelta(days=30),
+                     image="some path", score=0, vote_count=0, overview="some overview")
+        response = self.client.get(reverse('polls:index'))
+        self.assertContains(response, "No movies are available.")
+        self.assertQuerysetEqual(response.context['latest_movie_list'], [])
+
+
+class ResultsViewTest(TestCase):
+    def test_no_results(self):
+        """
+        If no movies exist, an appropriate message should be displayed.
+        """
+        response = self.client.get(reverse('polls:results', args=(1,)))
+        self.assertEqual(response.status_code, 404)
+
+    def test_movie_with_choices(self):
+        """
+        If a movie exists and has choices, the choices should be displayed.
+        """
+        movie = Movie.objects.create(title='Test Movie', release_date=timezone.now(), image="some path", score=0, vote_count=0, overview="some overview")
+        choice1 = Choice.objects.create(movie=movie, choice=1, votes=0)
+        choice2 = Choice.objects.create(movie=movie, choice=2, votes=0)
+        response = self.client.get(reverse('polls:results', args=(movie.id,)))
+        self.assertContains(response, choice1.choice)
+        self.assertContains(response, choice2.choice)
+
+
+class VoteViewTest(TestCase):
+    def test_voting_for_nonexistent_movie(self):
+        """
+        If the user tries to vote for a nonexistent movie, they should see a 404 error.
+        """
+        response = self.client.post(reverse('polls:vote', args=(1,)), {'choice': 1})
+        self.assertEqual(response.status_code, 404)
+
+    def test_voting_for_movie_with_choices(self):
+        """
+        If the user votes for a movie with choices, the vote count and score should be updated.
+        """
+        movie = Movie.objects.create(title='Test Movie', release_date=timezone.now(), image="some path", score=0, vote_count=0, overview="some overview")
+        choice1 = Choice.objects.create(movie=movie, choice=1, votes=0)
+        choice2 = Choice.objects.create(movie=movie, choice=2, votes=0)
+        response = self.client.post(reverse('polls:vote', args=(movie.id,)), {'choice': choice1.id})
+        movie.refresh_from_db()
+        self.assertEqual(movie.vote_count, 1)
+        self.assertEqual(movie.score, int(choice1.choice) / 2)
+        choice1.refresh_from_db()
+        self.assertEqual(choice1.votes, 1)
+
+    def test_voting_with_no_choice_selected(self):
+        """
+        If the user tries to vote without selecting a choice, they should see an error message.
+        """
+        movie = Movie.objects.create(title='Test Movie', release_date=timezone.now(), image="some path", score=0, vote_count=0, overview="some overview")
+        choice1 = Choice.objects.create(movie=movie, choice=1, votes=0)
+        response = self.client.post(reverse('polls:vote', args=(movie.id,)), {})
+        self.assertContains(response, "You didn't select a choice.")
+
+    def test_delete(self):
+        """
+        Test that deleting a movie works and redirects to the index page.
+        """
+        movie = Movie.objects.create(title='Test Movie', release_date=timezone.now(), image="some path", score=0, vote_count=0, overview="some overview")
+        url = reverse('polls:delete', args=(movie.id,))
+        response = self.client.post(url)
+        self.assertRedirects(response, reverse('polls:index'))
+
+

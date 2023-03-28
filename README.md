@@ -1,34 +1,22 @@
-# CA1-backend
-CA1-backend
-For this project we were asked to create a polls app in Django using MySQL as a database. 
-The template we used it's from Django tutorial and it's a webapp where the user can vote answers for different questions.
-We used the same template and data types, but instead of questions we used names of movies, 
-and instead of answers the user can vote to give a score.
-We added a delete button on the app to make use of some other method as delete
+# CA3-backend
+For our CA3-backend project, our task was to create a test class for an existing full stack web application using Python, Django, and MySQL, which could perform CRUD operations. Since we had already created such functionality in our previous assessments, we decided to extend our test class to test models and views due to time constraints.
 
-We tried in some ways to populate the database with a script, we approach the problem in 
-2 different ways but the script was not working.
+While we did not have the opportunity to test APIs and Forms, we did install the coverage package to analyze the testing coverage and generate reports on our application. The coverage report showed that our application had achieved a 95% coverage.
 
-- **First method:** we retrieved data from an external API (title and score of movies), 
-following the method on Django website we tried to populate the database, but we could not import the models, 
-we tried to create a second data class with the same fields, but it did not work. 
+To ensure that our testing was reliable and independent, we created and point, on the setting file, to a separate database to execute the test cases. This approach allowed us to test our application in isolation, without any interference from external factors.
 
-- **Second method:** We tried to create a Json file with the data to use loaddata method, but when we were running the command, we were having an error
 
-- We decided to pass the script manually on the shell, but it did not work.
-
-- Finally, we added some data manually and continue working, after refactoring some datatypes in the model and adding some fields we generate and the migration again, 
-without dumping the data, so we deleted the DB, and we created one more time, yet with all the refactoring we could not retrieve the choices for every movie,
-at some point we decided to drop the whole project and start over, this time with little changes from the tutorial.
-
----
-[Old repo that I broke](https://github.com/23643studentdorset/CAs-Backend)
 
 ---
 
-- [x] All CRUD operations are working as intended (e.g. the right data is retrieved while using an index, data is being deleted by a criteria, retrieve one or multiple records). 
-- [x] The application is connecting to the right database. 
-- [ ] The data is complex: it contains at least one index (unique entry); has at least 3 types of variables and there are sufficient entries already in the database; 
-- [x] Code is readable: consistency, right indentation, comments. 
-- [x] The application is accompanied by a short report (max. 500 words) or a ReadMe file. The report should explain the developing process of the application. 
-- [ ] Creativity: Do your own research and add any other functionality to your application. 
+- [x] Add manual testing using one of the unit test libraries and one or more module/function.
+- [x] Add Automatic (Dynamic) testing using one of the unit test libraries and one or more module/function.
+- [ ] Document the testing of the function and the assertions being used.
+- [x] Ensure that the test include: positive and negative tests.
+- [x] Configure the system with a config file for development and another for file test.
+- [x] The application is accompanied by a short report or readme file explaining the testing methodology and coverage.
+- [ ] Extend the web app to include at least 2 additional anti-haking security checks such as CSS, SQL injection, redirection
+
+---
+
+![Report.jpg](Report.jpg)

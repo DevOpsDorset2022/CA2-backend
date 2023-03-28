@@ -21,6 +21,9 @@
     <!-- main content with sections -->
     <main id="main">
         <ul style="padding: 0; margin: 0;">
+            {% if no_movies_message %}
+                <p>{{ no_movies_message }}</p>
+            {% endif %}
             {% for movie in latest_movie_list %}
             <div style="display: inline-block;">
                 <li style="height: 250px; width: 200px; list-style: none;">

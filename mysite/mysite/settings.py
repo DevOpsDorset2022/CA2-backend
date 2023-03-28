@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_extensions',
-    "accounts",  # new
+    "accounts",
 ]
 
 MIDDLEWARE = [
@@ -85,8 +85,8 @@ DATABASES = {
     'test': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'django_polls_db2_test',
-        'USER': 'djangopollsadmin',
-        'PASSWORD': '123456',
+        'USER': 'root',
+        'PASSWORD': 'Luchito89!',
         'HOST': 'localhost',
         'PORT': '3306',
     }

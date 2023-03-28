@@ -20,6 +20,15 @@ class IndexView(generic.ListView):
             release_date__lte=timezone.now()
         ).order_by('-release_date')[:]
 
+    def index(request):
+        movies = Movie.objects.filter(release_date__lte=timezone.now()).order_by('-release_date')
+        if not movies:
+            context = {'message': 'No movies are available.'}
+            return render(request, 'polls/index.html', context)
+        else:
+            context = {'movies': movies}
+            return render(request, 'polls/index.html', context)
+
 
 class DetailView(generic.DetailView):
     model = Movie
@@ -49,7 +58,7 @@ def vote(request, movie_id):
         })
     else:
         movie.vote_count += 1
-        movie.score = (movie.score + int(selected_choice.choice))/2
+        movie.score = (movie.score + int(selected_choice.choice)) / 2
         selected_choice.votes += 1
         movie.save()
         selected_choice.save()
@@ -68,4 +77,3 @@ def delete(request, movie_id):
     movie = get_object_or_404(Movie, pk=movie_id)
     movie.delete()
     return HttpResponseRedirect(reverse('polls:index'))
-
