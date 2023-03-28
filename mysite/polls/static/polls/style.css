@@ -47,7 +47,6 @@
             display: flex;
             align-items: center;
         }
-
         #search {
             width: 230px;
             border: 1px solid black;
@@ -99,7 +98,7 @@
         }
 
         main div:hover {
-            background:#FFCCCB;
+            background: #c86cf5;
         }
 
         @media (min-width: 768px) {
@@ -112,11 +111,11 @@
 
         main img {
             width: 100%;
-            height: 89%;
-            object-fit: cover;
+            height: 100%;
+            object-fit: fill;
         }
         main h2 {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 600;
             text-align: center;
             color: #fff;
@@ -133,7 +132,7 @@
 .container {
   display: block;
   position: relative;
-  padding-left: 35px;
+  padding-left: 10px;
   margin-bottom: 12px;
   cursor: pointer;
   font-size: 22px;

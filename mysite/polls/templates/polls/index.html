@@ -1,4 +1,4 @@
-{% if latest_question_list %}
+{% if latest_movie_list %}
 {% load static %}
 
 <head>
@@ -20,13 +20,22 @@
     </header>
     <!-- main content with sections -->
     <main id="main">
-        <ul>
-            {% for question in latest_question_list %}
-                <div>
-                   <li><a href="{% url 'polls:detail' question.id %}">{{ question.question_text }}</a></li>
-                       <h2>{{ question.question_text }}</h2>
+        <ul style="padding: 0; margin: 0;">
+            {% for movie in latest_movie_list %}
+            <div style="display: inline-block;">
+                <li style="height: 250px; width: 200px; list-style: none;">
+                    <a href="{% url 'polls:detail' movie.id %}">
+                        <img src="{{ movie.image }}" alt="{{ movie.title }}" style="max-height: 200px; max-width: 200px;">
+                        <h2>
+                          {% if movie.title|length <= 21 %}
+                            {{ movie.title }}
+                          {% else %}
+                            {{ movie.title|slice:":17" }}...
+                          {% endif %}
+                        </h2>
                     </a>
-                </div>
+                </li>
+            </div>
             {% endfor %}
         </ul>
         {% else %}

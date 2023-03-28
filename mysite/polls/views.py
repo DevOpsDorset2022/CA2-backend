@@ -37,32 +37,35 @@ class ResultsView(generic.DetailView):
     template_name = 'polls/results.html'
 
 
-def vote(request, question_id):
-    question = get_object_or_404(Movie, pk=question_id)
+def vote(request, movie_id):
+    movie = get_object_or_404(Movie, pk=movie_id)
     try:
-        selected_choice = question.choice_set.get(pk=request.POST['choice'])
+        selected_choice = movie.choice_set.get(pk=request.POST['choice'])
     except (KeyError, Choice.DoesNotExist):
         # Redisplay the movie voting form.
         return render(request, 'polls/detail.html', {
-            'movie': question,
+            'movie': movie,
             'error_message': "You didn't select a choice.",
         })
     else:
+        movie.vote_count += 1
+        movie.score = (movie.score + int(selected_choice.choice))/2
         selected_choice.votes += 1
+        movie.save()
         selected_choice.save()
         # Always return an HttpResponseRedirect after successfully dealing
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.
-        return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
+        return HttpResponseRedirect(reverse('polls:results', args=(movie.id,)))
 
 
-def results(request, question_id):
-    question = get_object_or_404(Movie, pk=question_id)
-    return render(request, 'polls/results.html', {'movie': question})
+def results(request, movie_id):
+    movie = get_object_or_404(Movie, pk=movie_id)
+    return render(request, 'polls/results.html', {'movie': movie})
 
 
-def delete(request, question_id):
-    question = get_object_or_404(Movie, pk=question_id)
-    question.delete()
+def delete(request, movie_id):
+    movie = get_object_or_404(Movie, pk=movie_id)
+    movie.delete()
     return HttpResponseRedirect(reverse('polls:index'))
 

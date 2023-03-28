@@ -3,7 +3,7 @@ from datetime import datetime
 
 import requests
 from polls.models import Movie
-
+from polls.models import Choice
 
 # class Movie2:
 #     def __init__(self, title, release_date, score, image_path):
@@ -34,7 +34,7 @@ def check_date_format(date_string, date_format):
 
 movies = []
 
-for i in range(1, 500):
+for i in range(1, 501):
     req = requests.get(
         'https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=04c35731a5ee918f014970082a0088b1'
         '&page=' + str(i))
@@ -44,6 +44,8 @@ for i in range(1, 500):
     for element in json_data['results']:
         movie = Movie()
         movie.title = element['title']
+        movie.vote_count = element['vote_count']
+        movie.overview = element['overview']
 
         if is_json_key_present(element, 'release_date'):
             if check_date_format(element['release_date'], '%Y-%m-%d') and isinstance(element['release_date'], str):
@@ -58,6 +60,12 @@ for i in range(1, 500):
             movie.image = " "
         movie.score = element['vote_average']
         movie.save()
+        for j in range(1, 11):
+            choice = Choice()
+            choice.movie = movie
+            choice.choice = j
+            choice.votes = 0
+            choice.save()
         movies.append(movie)
 
 for movie in movies:

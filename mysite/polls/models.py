@@ -13,6 +13,8 @@ class Movie(models.Model):
     release_date = models.DateTimeField('date published')
     image = models.CharField(max_length=400)
     score = models.FloatField()
+    vote_count = models.IntegerField()
+    overview = models.TextField()
 
     def was_published_recently(self):
         now = timezone.now()
@@ -21,9 +23,10 @@ class Movie(models.Model):
     def __str__(self):
         return self.title
 
+
 class Choice(models.Model):
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
-    choice = models.CharField(max_length=200)
+    choice = models.IntegerField()
     votes = models.IntegerField(default=0)
 
     def __str__(self):
